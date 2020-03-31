@@ -16,16 +16,15 @@ def make_data(filename, manage_start, data_amount):
 	for i, word in enumerate(vocab):
 		word2list[word] = i
 
-	template = [0 for i in range(len(vocab))]
-	input_data = list()
+	
+	input_data = []
 	for sent in rewiews:
-		temp_data = template.copy()
+		temp_data = []
 		for word in sent:
 			try:
-				temp_data[word2list[word]] = 1
+				temp_data.append(word2list[word])
 			except:
 				pass
 		input_data.append(temp_data)
-
 	output_data = list(map(lambda x:int(x == 'Positive'), df.sentiment))[manage_start:manage_start +  data_amount]
-	return [np.array(input_data), np.array(output_data)]
+	return [input_data, output_data, len(vocab)]
