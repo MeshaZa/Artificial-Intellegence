@@ -36,8 +36,8 @@ for sent in df:
 concatenated = np.array(concatenated)
 input_dataset = np.array(input_dataset)
 
-quality, alpha, sent_size, hidden_layer = (5, 0.05, 5, 100)
-its = 2
+quality, alpha, sent_size, hidden_layer = (5, 0.05, 5, 50)
+its = 3
 base = [0,1,3,4]
 layer_2_target = np.zeros(quality+1)
 layer_2_target[0] = 1
@@ -74,15 +74,16 @@ for it in range(its):
 
         if(rev_i%250==0):
             l = len(input_dataset)
-            sys.stdout.write('\r Completed: ' + str((rev_i + l*it)*100// (l * its)) + '% ')
+            f = ((rev_i + l*it)*100// (l * its))
+            sys.stdout.write('\r Completed: '+ "#"*(f//10) + "_"*(10-f//10)+' '+str(f) + '% ')
 while True:
     s = input()
     if(s == 'quit()'):
         break
     try:
-        print(similar(s))
+        sys.stdout.write(str(similar(s)) + " "*50)
     except:
-        print("Sorry, i don't know word", s)
+        sys.stdout.write("Sorry, i don't know word"+str(s) + " "*50 )
 
 
 
