@@ -11,7 +11,7 @@ vocab = set()
 word2index = {}
 index2word = {}
 
-df = list(map(lambda x:x.lower().replace(".", "").replace(",", "").split(), pd.read_csv('sent_data.csv')['sentence']))
+df = list(map(lambda x:x.lower().replace(".", "").replace(",", "").replace('"', "").split(), pd.read_csv('sent_data.csv')['sentence']))
 
 for sent in df:
     for word in sent:
@@ -36,11 +36,11 @@ for sent in df:
 concatenated = np.array(concatenated)
 input_dataset = np.array(input_dataset)
 
-quality, alpha, sent_size, hidden_layer = (5, 0.05, 5, 50)
+web_improvement, alpha, sent_size, hidden_layer = (5, 0.05, 5, 50)
 its = 3
-base = [0,1,3,4]
-layer_2_target = np.zeros(quality+1)
-layer_2_target[0] = 1
+web_1 = [i for i in range(sent_size) if(i!=sent_size//2)]
+ans = np.zeros(web_improvement+1)
+ans[0] = 1
 
 weights_0_1 = (np.random.rand(len(vocab),hidden_layer) - 0.5) * 0.2   
 weights_1_2 = np.random.rand(len(vocab), hidden_layer)*0
@@ -60,30 +60,27 @@ def sigmoid(x):
 
 for it in range(its):
     for rev_i,review in enumerate(input_dataset):
-        web = [review[2]]+list(concatenated[(np.random.rand(5)*len(concatenated)).astype('int').tolist()])
-     
-        layer_1 = np.mean(weights_0_1[review[base]], axis = 0)
-        layer_2 = sigmoid(layer_1.dot(weights_1_2[web].T))
-        delta_2 = layer_2 - layer_2_target
-        delta_1 = delta_2.dot(weights_1_2[web])
-    
-        weights_0_1[review[base]] -= delta_1 * alpha
-        weights_1_2[web] -= np.outer(delta_2, layer_1) * alpha  
-
+        web_2 = [review[sent_size//2]]+list(concatenated[(np.random.rand(web_improvement)*len(concatenated)).astype('int').tolist()])
+        layer_1 = np.mean(weights_0_1[review[web_1]], axis = 0)
+        layer_2 = sigmoid(layer_1.dot(weights_1_2[web_2].T))
+        delta_2 = layer_2 - ans
+        delta_1 = delta_2.dot(weights_1_2[web_2])
+        weights_0_1[review[web_1]] -= delta_1 * alpha
+        weights_1_2[web_2] -= np.outer(delta_2, layer_1) * alpha  
 
 
         if(rev_i%250==0):
             l = len(input_dataset)
             f = ((rev_i + l*it)*100// (l * its))
-            sys.stdout.write('\r Completed: '+ "#"*(f//10) + "_"*(10-f//10)+' '+str(f) + '% ')
+            sys.stdout.write('\r Completed: '+ "█"*(f//10) + "."*(10-f//10)+' '+str(f) + '% ')
 while True:
     s = input()
     if(s == 'quit()'):
         break
     try:
-        sys.stdout.write(str(similar(s)) + " "*50)
+        sys.stdout.write("\r" + str(similar(s)))
     except:
-        sys.stdout.write("Sorry, i don't know word"+str(s) + " "*50 )
+        sys.stdout.write("\rSorry, i don't know word"+str(s))
 
 
 
