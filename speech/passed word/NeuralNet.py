@@ -11,7 +11,7 @@ vocab = set()
 word2index = {}
 index2word = {}
 
-df = list(map(lambda x:x.lower().replace(".", "").replace(",", "").split(), pd.read_csv('rename.csv')['sentence']))
+df = list(map(lambda x:x.lower().replace(".", "").replace(",", "").split(), pd.read_csv('sent_data.csv')['sentence']))
 
 for sent in df:
     for word in sent:
@@ -79,8 +79,10 @@ while True:
     s = input()
     if(s == 'quit()'):
         break
-    print(similar(s))
-
+    try:
+        print(similar(s))
+    except:
+        print("Sorry, i don't know word", s)
 
 
 
